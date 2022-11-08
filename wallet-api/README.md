@@ -1,0 +1,1 @@
+Run npm init to create a package.json file
