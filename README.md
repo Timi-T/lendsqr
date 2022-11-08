@@ -146,7 +146,7 @@ With wrong password
 For all other endpoints, include the provided token in your request headers.
 
 #### Postman
-<img src="https://github.com/Timi-T/lendsqr/images/postman.png" alt="Include headers">
+<img src="https://github.com/Timi-T/lendsqr/blob/master/images/postman.png" alt="Include headers">
 
 #### CURL
 ```
