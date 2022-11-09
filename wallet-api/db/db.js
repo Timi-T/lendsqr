@@ -39,13 +39,13 @@ class DbClient {
 
   // Method to update an entry
   async put(table, filters, data) {
-    const obj = db(table).where(filters).update(data);
+    const obj = await db(table).where(filters).update(data);
     return obj;
   }
 
   // Method to delete an entry
   async del(table, filters) {
-    const obj = db(table).where(filters);
+    const obj = await db(table).where(filters).del();
     return obj;
   }
 }

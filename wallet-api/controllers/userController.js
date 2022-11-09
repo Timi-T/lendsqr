@@ -55,13 +55,18 @@ class UserController {
 
   // Method to get all registered users
   async allUsers(req, res) {
+    // Get page number for pagination
     let { page } = req.query;
+
+    // Check if page is of type int
     try {
       Number(page);
       if (!page) { page = 1; }
     } catch {
       page = 1;
     }
+
+    // Get users from database
     const users = await db.get('users', null, Number(page), 10);
 
     // Delete Personal Identifiable Information (PII)
@@ -71,10 +76,13 @@ class UserController {
       lastname: user.lastname,
       walletId: user.walletId,
     }));
-    let nextPage = Number(page )+ 1;
+
+    // Increment page number for next pagination and check if we are on last page
+    let nextPage = Number(page) + 1;
     if (!users.pagination.lastPage || users.pagination.lastPage === page) {
       nextPage = null;
     }
+
     return res.send(
       {
         _links: {
@@ -93,6 +101,7 @@ class UserController {
     const { username } = req.query;
     let userData = null;
 
+    // When we have a username or walletId
     if (walletId || username) {
       // Get user from database using walletID or username
       if (walletId) {

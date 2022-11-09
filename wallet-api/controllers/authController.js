@@ -29,14 +29,17 @@ class AuthController {
 
     // Validating the provided password for the user
     const user = { ...userData.data[0] };
+    if (!password) return res.status(401).send({ error: 'Missing password' });
     const hashedPwd = sha1(password);
     if (hashedPwd !== user.password) return res.status(401).send({ error: 'Wrong Password.' });
 
-    // Delete user password
+    // Delete user balance
     user.password = sha1(user.password);
     delete user.balance;
 
+    // Create access token for user
     const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
+
     return res.send({ success: { token: accessToken }, instruction: 'Include the token in the ( Authorization ) header for your request.' });
   }
 

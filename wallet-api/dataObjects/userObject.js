@@ -7,7 +7,16 @@ const sha1 = require('sha1');
 
 // Class to implement a user object
 class User {
-  constructor(firstname, lastname, username, email, phone, password, walletId, balance) {
+  constructor(
+    firstname,
+    lastname,
+    username,
+    email,
+    phone,
+    password = 'null',
+    walletId = null,
+    balance = 0,
+  ) {
     this.userId = uuid.v4();
     this.firstname = firstname;
     this.lastname = lastname;

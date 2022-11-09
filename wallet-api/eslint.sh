@@ -64,5 +64,15 @@ echo "Checking routes/index.js"
 npx eslint routes/index.js
 echo "Done checking routes directory"
 echo " "
+echo "Running eslint on files in tests directory..."
+echo " "
+echo "Checking tests/01_user.test.js"
+npx eslint tests/01_user.test.js
+echo "Checking tests/02_bank_wallet_transaction.test.js"
+npx eslint tests/02_bank_wallet_transaction.test.js
+echo "Checking tests/03_transfers.test.js"
+npx eslint tests/03_transfers.test.js
+echo "Done checking tests directory"
+echo " "
 echo "#============================================#"
 #============================================#

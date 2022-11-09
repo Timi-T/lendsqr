@@ -8,16 +8,21 @@ const db = require('../db/db');
 const Transfer = require('../dataObjects/TransferObject');
 const BankWalletTransaction = require('../dataObjects/bankWalletTransactionObject');
 
+function generateRand(length) {
+  const Id = [...Array(length)].map(() => {
+    const num = String(Math.random() * 10)[0];
+    return Number(num);
+  }).join('');
+  return Id;
+}
+
 // Transaction class with methods for making a transaction
 class Transaction {
   // Method to deposit money from a bank account
   async deposit(req, res) {
     // Getting body of post request and declaring variables
     const { user } = req;
-    const referenceNumber = `ref-${[...Array(10)].map(() => {
-      const num = String(Math.random() * 10)[0];
-      return Number(num);
-    }).join('')}`;
+    const referenceNumber = generateRand(10);
     const { userId } = user;
     const type = 'deposit';
     const { amount } = req.body;
@@ -29,12 +34,16 @@ class Transaction {
     // Checking that all required credentials are provided
     if (!amount) return res.status(400).send({ error: 'Please provide amount' });
     const msg = 'Amount has to be a figure';
+
+    // Checking that amount is a Number
     try {
-      amount = Number(amount);
-      if (typeof amount != 'number') return res.status(400).send({ error: msg });
+      Number(amount);
+      if (typeof amount !== 'number') return res.status(400).send({ error: msg });
     } catch {
       return res.status(400).send({ error: msg });
     }
+
+    // When method or service provider is missing
     if (!method) return res.status(400).send({ error: 'Please provide payment method' });
     if (!serviceProvider) return res.status(400).send({ error: 'Please provide a service provider' });
 
@@ -63,7 +72,9 @@ class Transaction {
       status,
     );
 
+    // Create a record for the deposit in the database
     await db.post('bank_wallet_transactions', newDeposit);
+
     return res.send({ success: `Your wallet has been credited with ${amount}. Your balance is ${balanceAfter}.` });
   }
 
@@ -71,10 +82,7 @@ class Transaction {
   async withdraw(req, res) {
     // Getting body of post request and declaring variables
     const { user } = req;
-    const referenceNumber = `ref-${[...Array(10)].map(() => {
-      const num = String(Math.random() * 10)[0];
-      return Number(num);
-    }).join('')}`;
+    const referenceNumber = generateRand(10);
     const { userId } = user;
     const type = 'withdrawal';
     const { amount } = req.body;
@@ -86,12 +94,16 @@ class Transaction {
     // Checking that all required credentials are provided
     if (!amount) return res.status(400).send({ error: 'Please provide amount' });
     const msg = 'Amount has to be a figure';
+
+    // Checking that amount is a Number
     try {
       Number(amount);
-      if (typeof amount != 'number') return res.status(400).send({ error: msg });
+      if (typeof amount !== 'number') return res.status(400).send({ error: msg });
     } catch {
       return res.status(400).send({ error: msg });
     }
+
+    // When method or service provider is missing
     if (!method) return res.status(400).send({ error: 'Please provide payment method' });
     if (!serviceProvider) return res.status(400).send({ error: 'Please provide a service provider' });
 
@@ -102,7 +114,7 @@ class Transaction {
     const balanceAfter = userBalance - amount;
 
     // Checking if source account has enough funds
-    if (balanceAfter < 0) return res.status(200).send({ error: 'Insufficient funds' });
+    if (balanceAfter < 0) return res.status(400).send({ error: 'Insufficient funds' });
 
     // Updating the balance for the user account
     const filters = { userId };
@@ -123,7 +135,9 @@ class Transaction {
       status,
     );
 
+    // Creating a record for the withdrawal in the database
     await db.post('bank_wallet_transactions', newWithdrawal);
+
     return res.send({ success: `Your wallet has been debited with ${amount}. Your balance is ${balanceAfter}.` });
   }
 
@@ -132,10 +146,7 @@ class Transaction {
     const { user } = req;
     const { userId } = user;
     const sourceUsername = user.username;
-    const referenceNumber = `ref-${[...Array(10)].map(() => {
-      const num = String(Math.random() * 10)[0];
-      return Number(num);
-    }).join('')}`;
+    const referenceNumber = generateRand(10);
     const { destinationUsername } = req.body;
     const { amount } = req.body;
     const { description } = req.body;
@@ -143,12 +154,16 @@ class Transaction {
     // Checking that all required credentials are provided
     if (!amount) return res.status(400).send({ error: 'Please provide amount' });
     const msg = 'Amount has to be a figure';
+
+    // Checking that amount is a Number
     try {
       Number(amount);
-      if (typeof amount != 'number') return res.status(400).send({ error: msg });
+      if (typeof amount !== 'number') return res.status(400).send({ error: msg });
     } catch {
       return res.status(400).send({ error: msg });
     }
+
+    // When there is no destination to transfer to
     if (!destinationUsername) return res.status(400).send({ error: 'Please provide a username to make a transfer to.' });
 
     // Getting the current balance for the user
@@ -162,7 +177,7 @@ class Transaction {
     if (destUserData.data.length === 0) return res.status(400).send({ error: 'Invalid username' });
 
     // Checking if source account has enough funds
-    if (balanceAfter < 0) return res.status(200).send({ error: 'Insufficient funds' });
+    if (balanceAfter < 0) return res.status(400).send({ error: 'Insufficient funds' });
 
     // Crediting the destination account
     const destUser = destUserData.data[0];
@@ -186,27 +201,41 @@ class Transaction {
       balanceAfter,
     );
 
+    // Creating a record for he transfer in the database
     await db.post('transfers', newTransfer);
+
     return res.send({ success: `Transfer to ${destinationUsername} successful!. Your balance is ${balanceAfter}.` });
   }
 
   // Method to retrieve all deposits for a user
   async allDeposits(req, res) {
+    // Getting page from the request parameters
     let { page } = req.query;
+
+    // Checking that amount is a Number
     try {
       page = Number(page);
       if (!page) { page = 1; }
     } catch {
       page = 1;
     }
+
+    // Getting the current user
     const { user } = req;
+
+    // Getting all deposits for the user from the database
     const deposits = await db.get('bank_wallet_transactions', { userId: user.userId, type: 'deposit' }, page, 10);
+
+    // Sort according to date
     deposits.data.sort((a, b) => b.createdAt - a.createdAt);
+
+    // Increment the page number and check if we are on last page
     let nextPage = page + 1;
     if (!deposits.pagination.lastPage || deposits.pagination.lastPage === page) {
       nextPage = null;
     }
-    return res.send(
+
+    return res.status(200).send(
       {
         _links: {
           self: { href: `/deposits?page=${page}` },
@@ -219,20 +248,32 @@ class Transaction {
 
   // Method to retrieve all withdrawals for a user
   async allWithdrawals(req, res) {
+    // Getting page from the request parameters
     let { page } = req.query;
+
+    // Checking that amount is a Number
     try {
       page = Number(page);
       if (!page) { page = 1; }
     } catch {
       page = 1;
     }
+
+    // Getting the current user
     const { user } = req;
+
+    // Getting all withdrawals for the user from the database
     const withdrawals = await db.get('bank_wallet_transactions', { userId: user.userId, type: 'withdrawal' }, page, 10);
+
+    // Sort according to date
     withdrawals.data.sort((a, b) => b.createdAt - a.createdAt);
+
+    // Increment the page number and check if we are on last page
     let nextPage = page + 1;
     if (!withdrawals.pagination.lastPage || withdrawals.pagination.lastPage === page) {
       nextPage = null;
     }
+
     return res.send(
       {
         _links: {
@@ -246,20 +287,32 @@ class Transaction {
 
   // Method to retrieve all transfers for a user
   async allTransfers(req, res) {
+    // Getting page from the request parameters
     let { page } = req.query;
+
+    // Checking that amount is a Number
     try {
       page = Number(page);
       if (!page) { page = 1; }
     } catch {
       page = 1;
     }
+
+    // Getting the current user
     const { user } = req;
+
+    // Getting all transfers done by the user from the database
     const transfers = await db.get('transfers', { sourceUsername: user.username }, page, 10);
+
+    // Sort according to date
     transfers.data.sort((a, b) => b.createdAt - a.createdAt);
+
+    // Increment the page number and check if we are on last page
     let nextPage = page + 1;
     if (!transfers.pagination.lastPage || transfers.pagination.lastPage === page) {
       nextPage = null;
     }
+
     return res.send(
       {
         _links: {
@@ -273,27 +326,38 @@ class Transaction {
 
   // Method to retrieve all transactions for a user
   async allTransactions(req, res) {
+    // Getting page from the request parameters
     let { page } = req.query;
+
+    // Checking that amount is a Number
     try {
       page = Number(page);
       if (!page) { page = 1; }
     } catch {
       page = 1;
     }
+
+    // Getting the current user
     const { user } = req;
+
+    // Getting all transactions done by the user from the database
     const deposits = await db.get('bank_wallet_transactions', { userId: user.userId, type: 'deposit' }, page, 5);
     const withdrawals = await db.get('bank_wallet_transactions', { userId: user.userId, type: 'withdrawal' }, page, 5);
     const transfers = await db.get('transfers', { sourceUsername: user.username }, page, 5);
     const transactions = [...deposits.data, ...withdrawals.data, ...transfers.data];
+
+    // Sort according to date
     transactions.sort((a, b) => b.createdAt - a.createdAt);
+
+    // Increment the page number and check if we are on last page
     let nextPage = page + 1;
     const dp = deposits.pagination.lastPage;
     const wp = withdrawals.pagination.lastPage;
     const tp = transfers.pagination.lastPage;
-
     if ((!dp || dp === page) && (!wp || wp === page) && (!tp || tp === page)) {
       nextPage = null;
     }
+
     return res.send(
       {
         _links: {
