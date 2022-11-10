@@ -7,6 +7,10 @@ const user1 = new User('Opeyemi', 'Ogunbode', 'opeyemi1', 'ope@gmail.com', '0901
 const user2 = new User('Opeyemi', 'Ogunbode', 'opeyemi2', 'opeyemi@gmail.com', '09011164281', 'opeyemi', 12345679, 1300000);
 const user3 = new User('Opeyemi', 'Ogunbode', 'opeyemi3', 'opebode@gmail.com', '09011164282', 'opeyemi', 12345670, 1400000);
 
+user1.user_id = '1';
+user2.user_id = '2';
+user3.user_id = '3';
+
 /**
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }

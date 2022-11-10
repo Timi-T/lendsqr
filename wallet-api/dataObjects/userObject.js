@@ -17,14 +17,14 @@ class User {
     walletId = null,
     balance = 0,
   ) {
-    this.userId = uuid.v4();
+    this.user_id = uuid.v4();
     this.firstname = firstname;
     this.lastname = lastname;
     this.username = username;
     this.email = email;
     this.phone = phone;
     this.password = sha1(password);
-    this.walletId = walletId;
+    this.wallet_id = walletId;
     this.balance = balance;
   }
 }

@@ -6,45 +6,53 @@
  */
 exports.up = function create(knex) {
   return knex.schema.createTable('users', (table) => {
-    table.string('userId').notNullable().primary();
+    table.string('user_id').notNullable().primary();
     table.string('firstname').notNullable();
     table.string('lastname').notNullable();
     table.string('username').notNullable();
     table.string('email').notNullable().unique();
     table.string('phone').notNullable().unique();
     table.string('password').notNullable();
-    table.string('walletId').unique();
+    table.string('wallet_id').unique();
     table.bigInteger('balance').defaultTo(0);
-    table.timestamp('createdAt').defaultTo(knex.fn.now());
-    table.timestamp('updatedAt').defaultTo(knex.fn.now());
+    table.timestamp('created_at').defaultTo(knex.fn.now());
+    table.timestamp('updated_at').defaultTo(knex.fn.now());
   })
     .createTable('bank_wallet_transactions', (table) => {
-      table.string('transactionId').primary();
+      table.string('transaction_id').primary();
       table.string('type').notNullable();
       table.string('method').notNullable();
-      table.string('serviceProvider').notNullable();
+      table.string('service_provider').notNullable();
       table.bigInteger('amount').notNullable();
       table.string('description');
-      table.string('referenceNumber').notNullable();
+      table.string('reference_number').notNullable();
       table.string('status').notNullable();
-      table.bigInteger('balanceBefore').notNullable();
-      table.bigInteger('balanceAfter').notNullable();
-      table.timestamp('createdAt').defaultTo(knex.fn.now());
-      table.string('userId')
-        .references('userId')
+      table.bigInteger('balance_before').notNullable();
+      table.bigInteger('balance_after').notNullable();
+      table.timestamp('created_at').defaultTo(knex.fn.now());
+      table.string('transaction_user_id')
+        .references('user_id')
         .inTable('users')
         .onDelete('CASCADE');
     })
     .createTable('transfers', (table) => {
-      table.string('transferId').primary();
+      table.string('transfer_id').primary();
       table.bigInteger('amount').notNullable();
-      table.string('sourceUsername').notNullable();
-      table.string('destUsername').notNullable();
+      table.string('source_username').notNullable();
+      table.string('destination_username').notNullable();
       table.string('description');
-      table.string('referenceNumber');
-      table.bigInteger('balanceBefore').notNullable();
-      table.bigInteger('balanceAfter').notNullable();
-      table.timestamp('createdAt').defaultTo(knex.fn.now());
+      table.string('reference_number');
+      table.bigInteger('balance_before').notNullable();
+      table.bigInteger('balance_after').notNullable();
+      table.timestamp('created_at').defaultTo(knex.fn.now());
+      table.string('source_user_id')
+        .references('user_id')
+        .inTable('users')
+        .onDelete('CASCADE');
+      table.string('destination_user_id')
+        .references('user_id')
+        .inTable('users')
+        .onDelete('CASCADE');
     });
 };
 

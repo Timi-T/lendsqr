@@ -8,21 +8,25 @@ const uuid = require('uuid');
 class Transfer {
   constructor(
     sourceUsername,
-    destUsername,
+    destinationUsername,
+    sourceUserId,
+    destinationUserId,
     amount,
     description,
-    refNumber,
+    referenceNumber,
     balanceBefore,
     balanceAfter,
   ) {
-    this.transferId = uuid.v4();
-    this.sourceUsername = sourceUsername;
-    this.destUsername = destUsername;
+    this.transfer_id = uuid.v4();
+    this.source_username = sourceUsername;
+    this.destination_username = destinationUsername;
+    this.source_user_id = sourceUserId;
+    this.destination_user_id = destinationUserId;
     this.amount = amount;
     this.description = description;
-    this.referenceNumber = refNumber;
-    this.balanceBefore = balanceBefore;
-    this.balanceAfter = balanceAfter;
+    this.reference_number = referenceNumber;
+    this.balance_before = balanceBefore;
+    this.balance_after = balanceAfter;
   }
 }
 

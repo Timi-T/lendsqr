@@ -23,7 +23,7 @@ class Transaction {
     // Getting body of post request and declaring variables
     const { user } = req;
     const referenceNumber = generateRand(10);
-    const { userId } = user;
+    const userId = user.user_id;
     const type = 'deposit';
     const { amount } = req.body;
     const { method } = req.body;
@@ -48,13 +48,13 @@ class Transaction {
     if (!serviceProvider) return res.status(400).send({ error: 'Please provide a service provider' });
 
     // Getting the current balance for the user
-    const userCurrent = await db.get('users', { userId });
+    const userCurrent = await db.get('users', { user_id: userId });
     const userBalance = userCurrent.data[0].balance;
     const balanceBefore = userBalance;
     const balanceAfter = amount + userBalance;
 
     // Updating the balance for the user account
-    const filters = { userId };
+    const filters = { user_id: userId };
     const data = { balance: balanceAfter };
     await db.put('users', filters, data);
 
@@ -83,7 +83,7 @@ class Transaction {
     // Getting body of post request and declaring variables
     const { user } = req;
     const referenceNumber = generateRand(10);
-    const { userId } = user;
+    const userId = user.user_id;
     const type = 'withdrawal';
     const { amount } = req.body;
     const { method } = req.body;
@@ -108,7 +108,7 @@ class Transaction {
     if (!serviceProvider) return res.status(400).send({ error: 'Please provide a service provider' });
 
     // Getting the current balance for the user
-    const userCurrent = await db.get('users', { userId });
+    const userCurrent = await db.get('users', { user_id: userId });
     const userBalance = userCurrent.data[0].balance;
     const balanceBefore = userBalance;
     const balanceAfter = userBalance - amount;
@@ -117,7 +117,7 @@ class Transaction {
     if (balanceAfter < 0) return res.status(400).send({ error: 'Insufficient funds' });
 
     // Updating the balance for the user account
-    const filters = { userId };
+    const filters = { user_id: userId };
     const data = { balance: balanceAfter };
     await db.put('users', filters, data);
 
@@ -144,7 +144,7 @@ class Transaction {
   async transfer(req, res) {
     // Getting body of post request and declaring variables
     const { user } = req;
-    const { userId } = user;
+    const userId = user.user_id;
     const sourceUsername = user.username;
     const referenceNumber = generateRand(10);
     const { destinationUsername } = req.body;
@@ -167,7 +167,7 @@ class Transaction {
     if (!destinationUsername) return res.status(400).send({ error: 'Please provide a username to make a transfer to.' });
 
     // Getting the current balance for the user
-    const userCurrent = await db.get('users', { userId });
+    const userCurrent = await db.get('users', { user_id: userId });
     const userBalance = userCurrent.data[0].balance;
     const balanceBefore = userBalance;
     const balanceAfter = userBalance - amount;
@@ -181,12 +181,12 @@ class Transaction {
 
     // Crediting the destination account
     const destUser = destUserData.data[0];
-    const destFilters = { userId: destUser.userId };
+    const destFilters = { user_id: destUser.user_id };
     const destData = { balance: amount + destUser.balance };
     await db.put('users', destFilters, destData);
 
     // Debiting source account
-    const sourceFilters = { userId: user.userId };
+    const sourceFilters = { user_id: user.user_id };
     const sourceData = { balance: balanceAfter };
     await db.put('users', sourceFilters, sourceData);
 
@@ -194,6 +194,8 @@ class Transaction {
     const newTransfer = new Transfer(
       sourceUsername,
       destinationUsername,
+      user.user_id,
+      destUser.user_id,
       amount,
       description,
       referenceNumber,
@@ -224,10 +226,10 @@ class Transaction {
     const { user } = req;
 
     // Getting all deposits for the user from the database
-    const deposits = await db.get('bank_wallet_transactions', { userId: user.userId, type: 'deposit' }, page, 10);
+    const deposits = await db.get('bank_wallet_transactions', { transaction_user_id: user.user_id, type: 'deposit' }, page, 10);
 
     // Sort according to date
-    deposits.data.sort((a, b) => b.createdAt - a.createdAt);
+    deposits.data.sort((a, b) => b.created_at - a.created_at);
 
     // Increment the page number and check if we are on last page
     let nextPage = page + 1;
@@ -263,10 +265,10 @@ class Transaction {
     const { user } = req;
 
     // Getting all withdrawals for the user from the database
-    const withdrawals = await db.get('bank_wallet_transactions', { userId: user.userId, type: 'withdrawal' }, page, 10);
+    const withdrawals = await db.get('bank_wallet_transactions', { transaction_user_id: user.user_id, type: 'withdrawal' }, page, 10);
 
     // Sort according to date
-    withdrawals.data.sort((a, b) => b.createdAt - a.createdAt);
+    withdrawals.data.sort((a, b) => b.created_at - a.created_at);
 
     // Increment the page number and check if we are on last page
     let nextPage = page + 1;
@@ -302,10 +304,10 @@ class Transaction {
     const { user } = req;
 
     // Getting all transfers done by the user from the database
-    const transfers = await db.get('transfers', { sourceUsername: user.username }, page, 10);
+    const transfers = await db.get('transfers', { source_user_id: user.user_id }, page, 10);
 
     // Sort according to date
-    transfers.data.sort((a, b) => b.createdAt - a.createdAt);
+    transfers.data.sort((a, b) => b.created_at - a.created_at);
 
     // Increment the page number and check if we are on last page
     let nextPage = page + 1;
@@ -341,13 +343,13 @@ class Transaction {
     const { user } = req;
 
     // Getting all transactions done by the user from the database
-    const deposits = await db.get('bank_wallet_transactions', { userId: user.userId, type: 'deposit' }, page, 5);
-    const withdrawals = await db.get('bank_wallet_transactions', { userId: user.userId, type: 'withdrawal' }, page, 5);
-    const transfers = await db.get('transfers', { sourceUsername: user.username }, page, 5);
+    const deposits = await db.get('bank_wallet_transactions', { transaction_user_id: user.user_id, type: 'deposit' }, page, 5);
+    const withdrawals = await db.get('bank_wallet_transactions', { transaction_user_id: user.user_id, type: 'withdrawal' }, page, 5);
+    const transfers = await db.get('transfers', { source_user_id: user.user_id }, page, 5);
     const transactions = [...deposits.data, ...withdrawals.data, ...transfers.data];
 
     // Sort according to date
-    transactions.sort((a, b) => b.createdAt - a.createdAt);
+    transactions.sort((a, b) => b.created_at - a.created_at);
 
     // Increment the page number and check if we are on last page
     let nextPage = page + 1;

@@ -53,7 +53,7 @@ class AuthController {
     if (!token) return res.status(401).send({ error: 'Please login to access this endpoint' });
 
     // Verify provided token
-    return jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+    return jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, async (err, user) => {
       if (err) return res.status(403).send({ error: 'Session expired or wrong token please login to get a new token.' });
       req.user = user;
       return next();

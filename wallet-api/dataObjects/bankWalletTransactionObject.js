@@ -7,27 +7,27 @@ const uuid = require('uuid');
 // Class to implement a Bank wallet object
 class BankWalletTransaction {
   constructor(
-    userId,
+    transactionUserId,
     method,
     type,
     serviceProvider,
     amount,
     description,
-    refNumber,
+    referenceNumber,
     balanceBefore,
     balanceAfter,
     status,
   ) {
-    this.transactionId = uuid.v4();
+    this.transaction_id = uuid.v4();
     this.type = type;
-    this.userId = userId;
+    this.transaction_user_id = transactionUserId;
     this.method = method;
-    this.serviceProvider = serviceProvider;
+    this.service_provider = serviceProvider;
     this.amount = amount;
     this.description = description;
-    this.referenceNumber = refNumber;
-    this.balanceBefore = balanceBefore;
-    this.balanceAfter = balanceAfter;
+    this.reference_number = referenceNumber;
+    this.balance_before = balanceBefore;
+    this.balance_after = balanceAfter;
     this.status = status;
   }
 }

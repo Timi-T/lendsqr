@@ -45,7 +45,7 @@ describe('Test /signup endpoint', function testSignup() {
   });
 
   // Test signup functionality with missing data
-  it('1. Test user signup with missing data', function testWithMissingData(done) {
+  it('2. Test user signup with missing data', function testWithMissingData(done) {
     // Test without username
     this.options.body = this.user4;
     request.post(this.options, (err, res) => {

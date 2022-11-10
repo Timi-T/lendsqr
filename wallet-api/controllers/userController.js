@@ -29,11 +29,11 @@ class UserController {
     const { email } = req.body;
     const { phone } = req.body;
     const { password } = req.body;
+    const balance = 0;
     const walletId = [...Array(8)].map(() => {
       const num = String(Math.random() * 10)[0];
       return Number(num);
     }).join('');
-    const balance = 0;
 
     // Validating provided data
     const err = validationError(firstname, lastname, username, email, phone, password);
@@ -71,10 +71,10 @@ class UserController {
 
     // Delete Personal Identifiable Information (PII)
     const newUsers = users.data.map((user) => ({
-      userId: user.userId,
+      userId: user.user_d,
       firstname: user.firstname,
       lastname: user.lastname,
-      walletId: user.walletId,
+      walletId: user.wallet_id,
     }));
 
     // Increment page number for next pagination and check if we are on last page
@@ -105,7 +105,7 @@ class UserController {
     if (walletId || username) {
       // Get user from database using walletID or username
       if (walletId) {
-        userData = await db.get('users', { walletId });
+        userData = await db.get('users', { wallet_id: walletId });
       } else {
         userData = await db.get('users', { username });
       }
@@ -115,7 +115,7 @@ class UserController {
 
       // Returning username, userId and walletId
       const user = userData.data[0];
-      const data = { userId: user.userId, username: user.username, walletId: user.walletId };
+      const data = { userId: user.user_id, username: user.username, walletId: user.wallet_id };
       return res.send(data);
     }
     // When no url parameter is found

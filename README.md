@@ -21,13 +21,15 @@ cd wallet-api && ./eslint.sh
 To test the endpoints run command
 
 ```
-npm test
+cd wallet-api && npm test
 ```
 
 Test results
 <img src="https://github.com/Timi-T/lendsqr/blob/master/images/tests.png" alt="Test results">
 
 > Database structure
+
+https://dbdesigner.page.link/HHCqdmgRVvqoPZSTA
 
 <img src="https://github.com/Timi-T/lendsqr/blob/master/images/database.png" alt="Database diagram">
 
@@ -51,7 +53,7 @@ From the root of this repository, run the script ``setup-db.sh`` and pass the us
 ./setup-db.sh [ USER ]
 ```
 
-> Example: "./setup-db.sh root"
+> Example: ./setup-db.sh root
 
 > If you intend to change the databse username or password, be sure to also correct the values in you environment variables or the ``wallet-api/db/knex.js`` file
 
@@ -74,4 +76,4 @@ Now you can access the API via localhost port 5000, using prefix ``api/v1``
 > Example: http://127.0.0.1:5000/api/v1/login
 
 ### Api Documentation
-> (Api documentation)[https://github.com/Timi-T/lendsqr/wallet-api]
+(Api documentation)[https://github.com/Timi-T/lendsqr/tree/master/wallet-api]

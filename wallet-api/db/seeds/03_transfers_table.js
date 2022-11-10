@@ -3,9 +3,9 @@
 const Transfer = require('../../dataObjects/TransferObject');
 
 // Creating user objects using the Transfer data model
-const c1 = new Transfer(1, 'Opeyemi1', 15000, 'chop life crew!', 'ref-1234', 10000, 25000, 'credit');
-const c2 = new Transfer(2, 'Opeyemi2', 5000, 'jaiye times 2!', 'ref-1235', 2000, 7000, 'credit');
-const c3 = new Transfer(3, 'Opeyemi3', 1000, 'after round 1!', 'ref-1236', 18000, 17000, 'debit');
+const c1 = new Transfer('Opeyemi1', 'Opeyemi2', '1', '2', 15000, 'chop life crew!', 'ref-1234', 10000, 25000);
+const c2 = new Transfer('Opeyemi2', 'Opeyemi1', '2', '1', 5000, 'jaiye times 2!', 'ref-1235', 2000, 7000);
+const c3 = new Transfer('Opeyemi3', 'Opeyemi2', '3', '2', 1000, 'after round 1!', 'ref-1236', 18000, 17000);
 
 /**
  * @param { import('knex').Knex } knex
