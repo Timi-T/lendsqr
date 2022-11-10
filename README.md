@@ -76,4 +76,5 @@ Now you can access the API via localhost port 5000, using prefix ``api/v1``
 > Example: http://127.0.0.1:5000/api/v1/login
 
 ### Api Documentation
-(Api documentation)[https://github.com/Timi-T/lendsqr/tree/master/wallet-api]
+
+> https://github.com/Timi-T/lendsqr/tree/master/wallet-api
