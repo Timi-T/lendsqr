@@ -40,16 +40,16 @@ class UserController {
     if (err) return res.status(400).send(err);
 
     // Checking to make sure provided data is unique
-    const usernameExists = await db.get('users', { username });
-    const emailExists = await db.get('users', { email });
-    const phoneExists = await db.get('users', { phone });
+    const usernameExists = await db.get('lend_users', { username });
+    const emailExists = await db.get('lend_users', { email });
+    const phoneExists = await db.get('lend_users', { phone });
     if (usernameExists.data.length > 0) return res.status(400).send({ error: 'Username is taken already.' });
     if (emailExists.data.length > 0) return res.status(400).send({ error: 'Account with this email already exists.' });
     if (phoneExists.data.length > 0) return res.status(400).send({ error: 'Account with this phone number already exists.' });
 
     // Create a new user in the database
     const user = new User(firstname, lastname, username, email, phone, password, walletId, balance);
-    await db.post('users', user);
+    await db.post('lend_users', user);
     return res.send({ success: `User ${username} has been created` });
   }
 
@@ -67,7 +67,7 @@ class UserController {
     }
 
     // Get users from database
-    const users = await db.get('users', null, Number(page), 10);
+    const users = await db.get('lend_users', null, Number(page), 10);
 
     // Delete Personal Identifiable Information (PII)
     const newUsers = users.data.map((user) => ({
@@ -105,9 +105,9 @@ class UserController {
     if (walletId || username) {
       // Get user from database using walletID or username
       if (walletId) {
-        userData = await db.get('users', { wallet_id: walletId });
+        userData = await db.get('lend_users', { wallet_id: walletId });
       } else {
-        userData = await db.get('users', { username });
+        userData = await db.get('lend_users', { username });
       }
 
       // When no user is found

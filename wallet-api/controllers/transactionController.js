@@ -48,7 +48,7 @@ class Transaction {
     if (!serviceProvider) return res.status(400).send({ error: 'Please provide a service provider' });
 
     // Getting the current balance for the user
-    const userCurrent = await db.get('users', { user_id: userId });
+    const userCurrent = await db.get('lend_users', { user_id: userId });
     const userBalance = userCurrent.data[0].balance;
     const balanceBefore = userBalance;
     const balanceAfter = amount + userBalance;
@@ -56,7 +56,7 @@ class Transaction {
     // Updating the balance for the user account
     const filters = { user_id: userId };
     const data = { balance: balanceAfter };
-    await db.put('users', filters, data);
+    await db.put('lend_users', filters, data);
 
     // Creating a record in the database for the transaction
     const newDeposit = new BankWalletTransaction(
@@ -108,7 +108,7 @@ class Transaction {
     if (!serviceProvider) return res.status(400).send({ error: 'Please provide a service provider' });
 
     // Getting the current balance for the user
-    const userCurrent = await db.get('users', { user_id: userId });
+    const userCurrent = await db.get('lend_users', { user_id: userId });
     const userBalance = userCurrent.data[0].balance;
     const balanceBefore = userBalance;
     const balanceAfter = userBalance - amount;
@@ -119,7 +119,7 @@ class Transaction {
     // Updating the balance for the user account
     const filters = { user_id: userId };
     const data = { balance: balanceAfter };
-    await db.put('users', filters, data);
+    await db.put('lend_users', filters, data);
 
     // Creating a record in the database for the transaction
     const newWithdrawal = new BankWalletTransaction(
@@ -167,13 +167,13 @@ class Transaction {
     if (!destinationUsername) return res.status(400).send({ error: 'Please provide a username to make a transfer to.' });
 
     // Getting the current balance for the user
-    const userCurrent = await db.get('users', { user_id: userId });
+    const userCurrent = await db.get('lend_users', { user_id: userId });
     const userBalance = userCurrent.data[0].balance;
     const balanceBefore = userBalance;
     const balanceAfter = userBalance - amount;
 
     // Checking if provided username exists
-    const destUserData = await db.get('users', { username: destinationUsername });
+    const destUserData = await db.get('lend_users', { username: destinationUsername });
     if (destUserData.data.length === 0) return res.status(400).send({ error: 'Invalid username' });
 
     // Checking if source account has enough funds
@@ -183,12 +183,12 @@ class Transaction {
     const destUser = destUserData.data[0];
     const destFilters = { user_id: destUser.user_id };
     const destData = { balance: amount + destUser.balance };
-    await db.put('users', destFilters, destData);
+    await db.put('lend_users', destFilters, destData);
 
     // Debiting source account
     const sourceFilters = { user_id: user.user_id };
     const sourceData = { balance: balanceAfter };
-    await db.put('users', sourceFilters, sourceData);
+    await db.put('lend_users', sourceFilters, sourceData);
 
     // Creating a record in the database for the transaction
     const newTransfer = new Transfer(

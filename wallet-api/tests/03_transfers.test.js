@@ -24,8 +24,8 @@ describe('Test all transfers endpoints', function testTransfer() {
     const user2 = new User('second', 'third', 'user2', 'email2', 'phone2', 'password', 5678, 20000);
 
     // Save users in database
-    await db.post('users', user1);
-    await db.post('users', user2);
+    await db.post('lend_users', user1);
+    await db.post('lend_users', user2);
 
     // Login user 1
     const options = {
@@ -69,11 +69,11 @@ describe('Test all transfers endpoints', function testTransfer() {
       };
       request.post(postOptions, (err, res) => {
         expect(res.statusCode).to.be.equal(200);
-        db.get('users', { username: 'user1' })
+        db.get('lend_users', { username: 'user1' })
           .then((user) => {
             const { balance } = user.data[0];
             expect(balance).to.be.equal(15000);
-            db.get('users', { username: 'user2' })
+            db.get('lend_users', { username: 'user2' })
               .then((user2) => {
                 const balance2 = user2.data[0].balance;
                 expect(balance2).to.be.equal(25000);
@@ -220,7 +220,7 @@ describe('Test all transfers endpoints', function testTransfer() {
   // Delete users from database
   this.afterAll(async function deleteUser() {
     // Delete all created users
-    await db.del('users', { username: 'user1' });
-    await db.del('users', { username: 'user2' });
+    await db.del('lend_users', { username: 'user1' });
+    await db.del('lend_users', { username: 'user2' });
   });
 });

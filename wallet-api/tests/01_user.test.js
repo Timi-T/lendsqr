@@ -26,7 +26,7 @@ describe('Test /signup endpoint', function testSignup() {
     this.user9 = new User('first9', 'last9', 'user9', 'email9', 'phone2', 'password');
 
     // Save a user in database
-    await db.post('users', this.user1);
+    await db.post('lend_users', this.user1);
 
     // Define post options
     this.options = {
@@ -87,15 +87,15 @@ describe('Test /signup endpoint', function testSignup() {
   // Delete user from database
   this.afterAll(async function deleteUser() {
     // Delete all created users
-    await db.del('users', { username: 'user1' });
-    await db.del('users', { username: 'user2' });
-    await db.del('users', { username: 'user3' });
-    await db.del('users', { username: 'user4' });
-    await db.del('users', { username: 'user5' });
-    await db.del('users', { username: 'user6' });
-    await db.del('users', { username: 'user7' });
-    await db.del('users', { username: 'user8' });
-    await db.del('users', { username: 'user9' });
+    await db.del('lend_users', { username: 'user1' });
+    await db.del('lend_users', { username: 'user2' });
+    await db.del('lend_users', { username: 'user3' });
+    await db.del('lend_users', { username: 'user4' });
+    await db.del('lend_users', { username: 'user5' });
+    await db.del('lend_users', { username: 'user6' });
+    await db.del('lend_users', { username: 'user7' });
+    await db.del('lend_users', { username: 'user8' });
+    await db.del('lend_users', { username: 'user9' });
   });
 });
 
@@ -111,7 +111,7 @@ describe('Test /login endpoint', function testLogin() {
     this.credential5 = { username: 'user1', password: null };
 
     // Save a user in database
-    await db.post('users', this.user1);
+    await db.post('lend_users', this.user1);
 
     // Define post options
     this.options = {
@@ -163,7 +163,7 @@ describe('Test /login endpoint', function testLogin() {
   // Delete user from database
   this.afterAll(async function deleteUser() {
     // Delete all created users
-    await db.del('users', { username: 'user1' });
+    await db.del('lend_users', { username: 'user1' });
   });
 });
 
@@ -174,7 +174,7 @@ describe('Test get /users and /user endpoints', function testGetUser() {
     this.user1 = new User('first', 'last', 'userx', 'emailx', 'phonex', 'password');
 
     // Save a user in database
-    await db.post('users', this.user1);
+    await db.post('lend_users', this.user1);
 
     // Login the user
     const options = {
@@ -256,6 +256,6 @@ describe('Test get /users and /user endpoints', function testGetUser() {
   // Delete user from database
   this.afterAll(async function deleteUser() {
     // Delete all created users
-    await db.del('users', { username: 'userx' });
+    await db.del('lend_users', { username: 'userx' });
   });
 });

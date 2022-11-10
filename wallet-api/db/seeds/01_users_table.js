@@ -1,4 +1,4 @@
-// Populate the users table
+// Populate the lend_users table
 
 const User = require('../../dataObjects/userObject');
 
@@ -17,6 +17,6 @@ user3.user_id = '3';
  */
 exports.seed = async function populate(knex) {
   // Deletes ALL existing entries
-  await knex('users').del();
-  await knex('users').insert([user1, user2, user3]);
+  await knex('lend_users').del();
+  await knex('lend_users').insert([user1, user2, user3]);
 };

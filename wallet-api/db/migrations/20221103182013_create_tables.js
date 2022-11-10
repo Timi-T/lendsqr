@@ -5,7 +5,7 @@
  * @returns { Promise<void> }
  */
 exports.up = function create(knex) {
-  return knex.schema.createTable('users', (table) => {
+  return knex.schema.createTable('lend_users', (table) => {
     table.string('user_id').notNullable().primary();
     table.string('firstname').notNullable();
     table.string('lastname').notNullable();
@@ -32,7 +32,7 @@ exports.up = function create(knex) {
       table.timestamp('created_at').defaultTo(knex.fn.now());
       table.string('transaction_user_id')
         .references('user_id')
-        .inTable('users')
+        .inTable('lend_users')
         .onDelete('CASCADE');
     })
     .createTable('transfers', (table) => {
@@ -47,11 +47,11 @@ exports.up = function create(knex) {
       table.timestamp('created_at').defaultTo(knex.fn.now());
       table.string('source_user_id')
         .references('user_id')
-        .inTable('users')
+        .inTable('lend_users')
         .onDelete('CASCADE');
       table.string('destination_user_id')
         .references('user_id')
-        .inTable('users')
+        .inTable('lend_users')
         .onDelete('CASCADE');
     });
 };
@@ -64,5 +64,5 @@ exports.down = function drop(knex) {
   return knex.schema
     .dropTableIfExists('bank_wallet_transactions')
     .dropTableIfExists('transfers')
-    .dropTableIfExists('users');
+    .dropTableIfExists('lend_users');
 };

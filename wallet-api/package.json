@@ -4,7 +4,7 @@
   "description": "wallet syatem for demo credit",
   "main": "server.js",
   "scripts": {
-    "test": "./node_modules/.bin/mocha tests/*.test.js",
+    "test": "./node_modules/.bin/mocha tests/*.test.js --timeout 20000",
     "start-server": "nodemon server.js"
   },
   "repository": {

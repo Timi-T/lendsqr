@@ -18,7 +18,7 @@ describe('Test for all deposit endpoints', function testdeposit() {
     this.user1 = new User('first', 'last', 'userx', 'emailx', 'phonex', 'password', null, 20000);
 
     // Save a user in database
-    await db.post('users', this.user1);
+    await db.post('lend_users', this.user1);
 
     // Login the user
     const options = {
@@ -60,7 +60,7 @@ describe('Test for all deposit endpoints', function testdeposit() {
     };
     request.post(this.postOptions, (err, res) => {
       expect(res.statusCode).to.be.equal(200);
-      db.get('users', { username: 'userx' })
+      db.get('lend_users', { username: 'userx' })
         .then((user) => {
           const { balance } = user.data[0];
           expect(balance).to.be.equal(20200);
@@ -126,7 +126,7 @@ describe('Test for all deposit endpoints', function testdeposit() {
   // Delete user from database
   this.afterAll(async function deleteUser() {
     // Delete all created users
-    await db.del('users', { username: 'userx' });
+    await db.del('lend_users', { username: 'userx' });
   });
 });
 
@@ -137,7 +137,7 @@ describe('Test for all withdrawal endpoints', function testwithdraw() {
     this.user1 = new User('first', 'last', 'userx', 'emailx', 'phonex', 'password', null, 20000);
 
     // Save a user in database
-    await db.post('users', this.user1);
+    await db.post('lend_users', this.user1);
 
     // Login the user
     const options = {
@@ -179,7 +179,7 @@ describe('Test for all withdrawal endpoints', function testwithdraw() {
     };
     request.post(this.postOptions, (err, res) => {
       expect(res.statusCode).to.be.equal(200);
-      db.get('users', { username: 'userx' })
+      db.get('lend_users', { username: 'userx' })
         .then((user) => {
           const { balance } = user.data[0];
           expect(balance).to.be.equal(13000);
@@ -257,6 +257,6 @@ describe('Test for all withdrawal endpoints', function testwithdraw() {
   // Delete user from database
   this.afterAll(async function deleteUser() {
     // Delete all created users
-    await db.del('users', { username: 'userx' });
+    await db.del('lend_users', { username: 'userx' });
   });
 });

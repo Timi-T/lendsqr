@@ -1,2 +1,4 @@
 /wallet-api/node_modules
 /wallet-api/package-lock.json
+.env
+wallet-api/.env

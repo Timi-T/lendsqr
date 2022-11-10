@@ -19,9 +19,9 @@ class AuthController {
 
     // Checking that a user with provided email or username exists
     if (username) {
-      userData = await db.get('users', { username });
+      userData = await db.get('lend_users', { username });
     } else if (email) {
-      userData = await db.get('users', { email });
+      userData = await db.get('lend_users', { email });
     } else return res.status(401).send({ error: 'Missing username or email address.' });
 
     // Validating that the username or email exists in the database
