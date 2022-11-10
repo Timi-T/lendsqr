@@ -50,8 +50,8 @@ class Transaction {
     // Getting the current balance for the user
     const userCurrent = await db.get('lend_users', { user_id: userId });
     const userBalance = userCurrent.data[0].balance;
-    const balanceBefore = userBalance;
-    const balanceAfter = amount + userBalance;
+    const balanceBefore = Number(userBalance);
+    const balanceAfter = Number(amount) + userBalance;
 
     // Updating the balance for the user account
     const filters = { user_id: userId };
